@@ -26,46 +26,47 @@ public class MessageFilters {
   }
 
   public static Predicate<TopicMessageDTO> containsStringFilter(String string) {
-    return msg -> StringUtils.contains(msg.getKey(), string)
-        || StringUtils.contains(msg.getContent(), string);
+    return msg -> StringUtils.containsIgnoreCase(msg.getKey(), string)
+        || StringUtils.containsIgnoreCase(msg.getContent(), string);
   }
 
   public static Predicate<TopicMessageDTO> groovyScriptFilter(String script) {
-    var compiledScript = compileScript(script);
+    var engine = getGroovyEngine();
+    var compiledScript = compileScript(engine, script);
     var jsonSlurper = new JsonSlurper();
     return new Predicate<TopicMessageDTO>() {
       @SneakyThrows
       @Override
       public boolean test(TopicMessageDTO msg) {
-        var bindings = getGroovyEngine().createBindings();
+        var bindings = engine.createBindings();
         bindings.put("partition", msg.getPartition());
         bindings.put("offset", msg.getOffset());
         bindings.put("timestampMs", msg.getTimestamp().toInstant().toEpochMilli());
         bindings.put("keyAsText", msg.getKey());
         bindings.put("valueAsText", msg.getContent());
         bindings.put("headers", msg.getHeaders());
-        bindings.put("key", parseToJsonOrReturnNull(jsonSlurper, msg.getKey()));
-        bindings.put("value", parseToJsonOrReturnNull(jsonSlurper, msg.getContent()));
+        bindings.put("key", parseToJsonOrReturnAsIs(jsonSlurper, msg.getKey()));
+        bindings.put("value", parseToJsonOrReturnAsIs(jsonSlurper, msg.getContent()));
         var result = compiledScript.eval(bindings);
         if (result instanceof Boolean) {
           return (Boolean) result;
         } else {
           throw new ValidationException(
-              String.format("Unexpected script result: %s, Boolean should be returned instead", result));
+              "Unexpected script result: %s, Boolean should be returned instead".formatted(result));
         }
       }
     };
   }
 
   @Nullable
-  private static Object parseToJsonOrReturnNull(JsonSlurper parser, @Nullable String str) {
+  private static Object parseToJsonOrReturnAsIs(JsonSlurper parser, @Nullable String str) {
     if (str == null) {
       return null;
     }
     try {
       return parser.parseText(str);
     } catch (Exception e) {
-      return null;
+      return str;
     }
   }
 
@@ -78,9 +79,9 @@ public class MessageFilters {
     return GROOVY_ENGINE;
   }
 
-  private static CompiledScript compileScript(String script) {
+  private static CompiledScript compileScript(GroovyScriptEngineImpl engine, String script) {
     try {
-      return getGroovyEngine().compile(script);
+      return engine.compile(script);
     } catch (ScriptException e) {
       throw new ValidationException("Script syntax error: " + e.getMessage());
     }

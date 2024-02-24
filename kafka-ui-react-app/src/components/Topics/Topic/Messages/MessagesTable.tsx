@@ -24,30 +24,31 @@ const MessagesTable: React.FC = () => {
   const [contentFilters, setContentFilters] = useState<PreviewFilter[]>([]);
 
   const [searchParams, setSearchParams] = useSearchParams();
-  const page = searchParams.get('page');
-  const { isLive } = useContext(TopicMessagesContext);
+  // const page = searchParams.get('page');
+  const { isLive, page, setPage } = useContext(TopicMessagesContext);
 
   const messages = useAppSelector(getTopicMessges);
   const isFetching = useAppSelector(getIsTopicMessagesFetching);
 
-  const isTailing = isLive && isFetching;
+  // const isTailing = isLive && isFetching;
 
   // Pagination is disabled in live mode, also we don't want to show the button
   // if we are fetching the messages or if we are at the end of the topic
-  const isPaginationDisabled = isTailing || isFetching;
+  const isPaginationDisabled = isLive || isFetching;
 
   const isNextPageButtonDisabled =
     isPaginationDisabled || messages.length < Number(MESSAGES_PER_PAGE);
-  const isPrevPageButtonDisabled =
-    isPaginationDisabled || !Number(searchParams.get('page'));
+  const isPrevPageButtonDisabled = isPaginationDisabled || (page === 1);
 
   const handleNextPage = () => {
-    searchParams.set('page', String(Number(page || 0) + 1));
+    // searchParams.set('page', String(Number(page || 1) + 1));
+    setPage(Number(page || 1) + 1);
     setSearchParams(searchParams);
   };
 
   const handlePrevPage = () => {
-    searchParams.set('page', String(Number(page || 0) - 1));
+    // searchParams.set('page', String(Number(page || 1) - 1));
+    setPage(Number(page || 1) - 1);
     setSearchParams(searchParams);
   };
 
