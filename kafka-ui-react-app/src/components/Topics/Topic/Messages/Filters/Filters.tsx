@@ -44,6 +44,7 @@ import RefreshIcon from 'components/common/Icons/RefreshIcon';
 import Input from 'components/common/Input/Input';
 import DatePicker from 'components/common/DatePicker/DatePicker';
 import { SelectSubFormProps } from 'components/common/Select/SelectSubForm';
+import ElapsedTime from 'components/common/ElapsedTime/ElapsedTime';
 
 import * as S from './Filters.styled';
 import {
@@ -433,29 +434,6 @@ const Filters: React.FC<FiltersProps> = ({
     setIsTailing(isLive);
   }, [isLive]);
 
-  const formatElapsedTime = (elapsedTimeMs: number): string => {
-    let timeMs = elapsedTimeMs;
-    // Convert milliseconds to hours, minutes, and seconds
-    const hours = Math.floor(timeMs / 3600000);
-
-    // Format the time components into a string
-    if (hours > 0) {
-      return `${hours}h `;
-    }
-    timeMs %= 3600000;
-    const minutes = Math.floor(timeMs / 60000);
-    if (minutes > 0 || hours > 0) {
-      return `${minutes}m `;
-    }
-    timeMs %= 60000;
-    const seconds = Math.floor(timeMs / 1000);
-    if (seconds > 0 || minutes > 0 || hours > 0) {
-      return `${seconds}s `;
-    }
-    timeMs %= 1000;
-    return `${timeMs}ms`;
-  };
-
   const pollingModeOptions: SelectOption[] = PollingModeOptions.map(
     (option) => {
       let subFormProps: SelectSubFormProps | undefined;
@@ -497,8 +475,6 @@ const Filters: React.FC<FiltersProps> = ({
       };
     }
   );
-
-  // const [pollingModeOptions, setPollingModeOptions] = React.useState<SelectOption[]>(getPollingModeOptions());
 
   return (
     <S.FiltersWrapper>
@@ -615,7 +591,7 @@ const Filters: React.FC<FiltersProps> = ({
             <S.MetricsIcon>
               <ClockIcon />
             </S.MetricsIcon>
-            <span>{formatElapsedTime(Math.max(elapsedMs || 0, 0))}</span>
+            <ElapsedTime value={Math.max(elapsedMs || 0, 0)} />
           </S.Metric>
           <S.Metric title="Bytes Consumed">
             <S.MetricsIcon>

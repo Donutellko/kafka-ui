@@ -4,6 +4,7 @@ import com.provectus.kafka.ui.config.ClustersProperties;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
 import javax.annotation.Nullable;
 import lombok.Builder;
@@ -31,6 +32,8 @@ public class InternalTopic {
   // topic configs
   private final List<InternalTopicConfig> topicConfigs;
   private final CleanupPolicy cleanUpPolicy;
+  private final long retentionTime;
+  private final long retentionBytes;
 
   // rates from metrics
   private final BigDecimal bytesInPerSec;
@@ -127,6 +130,34 @@ public class InternalTopic {
             .map(ConfigEntry::value)
             .map(CleanupPolicy::fromString)
             .orElse(CleanupPolicy.UNKNOWN)
+    );
+
+    topic.retentionTime(
+        configs.stream()
+            .filter(config -> config.name().equals("retention.ms"))
+            .findFirst()
+            .map(ConfigEntry::value)
+            .map(config -> {
+              try {
+                return Long.parseLong(config);
+              } catch (Exception e) {
+                return -1L;
+              }
+            }).orElse(-1L)
+    );
+
+    topic.retentionBytes(
+        configs.stream()
+            .filter(config -> config.name().equals("retention.bytes"))
+            .findFirst()
+            .map(ConfigEntry::value)
+            .map(config -> {
+              try {
+                return Long.parseLong(config);
+              } catch (Exception e) {
+                return -1L;
+              }
+            }).orElse(-1L)
     );
 
     return topic.build();

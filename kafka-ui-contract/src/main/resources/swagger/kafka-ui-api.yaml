@@ -2651,6 +2651,12 @@ components:
           type: string
         valueSerde:
           type: string
+        retentionTime:
+          type: integer
+          format: int64
+        retentionBytes:
+          type: integer
+          format: int64
       required:
         - name
 

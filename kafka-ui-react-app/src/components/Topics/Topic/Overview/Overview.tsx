@@ -8,6 +8,7 @@ import { RouteParamsClusterTopic } from 'lib/paths';
 import useAppParams from 'lib/hooks/useAppParams';
 import { useTopicDetails } from 'lib/hooks/api/topics';
 import { ColumnDef } from '@tanstack/react-table';
+import ElapsedTime from 'components/common/ElapsedTime/ElapsedTime';
 
 import * as S from './Overview.styled';
 import ActionsCell from './ActionsCell';
@@ -129,6 +130,16 @@ const Overview: React.FC = () => {
           </Metrics.Indicator>
           <Metrics.Indicator label="Type">
             <Tag color="gray">{data?.internal ? 'Internal' : 'External'}</Tag>
+          </Metrics.Indicator>
+          <Metrics.Indicator label="Retention Time">
+            <ElapsedTime value={data?.retentionTime} shorthand={false} />
+          </Metrics.Indicator>
+          <Metrics.Indicator label="Retention Size">
+            {data?.retentionBytes === -1 ? (
+              'Infinite'
+            ) : (
+              <BytesFormatted value={data?.retentionBytes} />
+            )}
           </Metrics.Indicator>
           <Metrics.Indicator label="Segment Size" title="">
             <BytesFormatted value={data?.segmentSize} />
