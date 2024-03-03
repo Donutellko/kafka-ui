@@ -27,11 +27,13 @@ import Tooltip from 'components/common/Tooltip/Tooltip';
 import { CONSUMER_GROUP_STATE_TOOLTIPS } from 'lib/constants';
 
 import ListItem from './ListItem';
+import Switch from 'components/common/Switch/Switch';
 
 const Details: React.FC = () => {
   const navigate = useNavigate();
-  const [searchParams] = useSearchParams();
+  const [searchParams, setSearchParams] = useSearchParams();
   const searchValue = searchParams.get('q') || '';
+  const showLagging = searchParams.get('showLagging') === 'true';
   const { isReadOnly } = React.useContext(ClusterContext);
   const routeParams = useAppParams<ClusterGroupParam>();
   const { clusterName, consumerGroupID } = routeParams;
@@ -48,13 +50,20 @@ const Details: React.FC = () => {
     navigate(clusterConsumerGroupResetRelativePath);
   };
 
-  const partitionsByTopic = groupBy(consumerGroup.data?.partitions, 'topic');
-  const filteredPartitionsByTopic = Object.keys(partitionsByTopic).filter(
-    (el) => el.includes(searchValue)
+  const handleSwitch = () => {
+    if (searchParams.has('showLagging')) searchParams.delete('showLagging');
+    else searchParams.set('showLagging', 'true');
+    setSearchParams(searchParams);
+  };
+
+  const filteredPartitionsByLag = consumerGroup.data?.partitions?.filter(
+    (p) => !showLagging || (p.consumerLag && p.consumerLag > 0)
+  )
+
+  const partitionsByTopic = groupBy(filteredPartitionsByLag, 'topic');
+  const currentPartitionsByTopic = Object.keys(partitionsByTopic).filter(
+    (el) => !searchValue.length || el.includes(searchValue)
   );
-  const currentPartitionsByTopic = searchValue.length
-    ? filteredPartitionsByTopic
-    : Object.keys(partitionsByTopic);
 
   const hasAssignedTopics = consumerGroup?.data?.topics !== 0;
 
@@ -125,12 +134,20 @@ const Details: React.FC = () => {
             {consumerGroup.data?.coordinator?.id}
           </Metrics.Indicator>
           <Metrics.Indicator label="Total lag">
-            {consumerGroup.data?.consumerLag}
+            {consumerGroup.data?.consumerLag || 0}
           </Metrics.Indicator>
         </Metrics.Section>
       </Metrics.Wrapper>
       <ControlPanelWrapper hasInput style={{ margin: '16px 0 20px' }}>
         <Search placeholder="Search by Topic Name" />
+        <label>
+          <Switch
+            name="ShowLaggingConsumers"
+            checked={showLagging}
+            onChange={handleSwitch}
+          />
+          Show Only Lagging
+        </label>
       </ControlPanelWrapper>
       <Table isFullwidth>
         <thead>

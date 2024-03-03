@@ -16,6 +16,9 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 import { CONSUMER_GROUP_STATE_TOOLTIPS, PER_PAGE } from 'lib/constants';
 import { useConsumerGroups } from 'lib/hooks/api/consumers';
 import Tooltip from 'components/common/Tooltip/Tooltip';
+import * as Metrics from 'components/common/Metrics';
+import { Tag } from 'components/common/Tag/Tag.styled';
+import getTagColor from 'components/common/Tag/getTagColor';
 
 const List = () => {
   const { clusterName } = useAppParams<ClusterNameRoute>();
@@ -93,6 +96,34 @@ const List = () => {
   return (
     <>
       <PageHeading text="Consumers" />
+      <Metrics.Wrapper>
+        <Metrics.Section>
+          <Metrics.Indicator
+            label="Total">
+            {
+              consumerGroups.data?.consumerGroupStats?.
+                reduce((accumulator, currentValue) => accumulator + (currentValue.count || 0), 0)
+            }
+          </Metrics.Indicator>
+          {
+            consumerGroups.data?.consumerGroupStats?.map((s) => 
+            (
+              <Metrics.Indicator
+                label={
+                  <Tooltip
+                    value={<Tag color={getTagColor(s.state)}>{s.state}</Tag>}
+                    content={CONSUMER_GROUP_STATE_TOOLTIPS[s.state || ConsumerGroupState.UNKNOWN]}
+                    placement="top-start"
+                  />
+                }
+              >
+                {s.count}
+               </Metrics.Indicator>
+            ))
+          }
+          
+        </Metrics.Section>
+      </Metrics.Wrapper>
       <ControlPanelWrapper hasInput>
         <Search placeholder="Search by Consumer Group ID" />
       </ControlPanelWrapper>

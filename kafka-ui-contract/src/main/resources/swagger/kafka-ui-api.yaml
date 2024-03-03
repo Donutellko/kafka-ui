@@ -2827,15 +2827,29 @@ components:
         - MESSAGES_BEHIND
         - TOPIC_NUM
 
+    ConsumerGroupStateStat:
+      type: object
+      properties:
+        state:
+          $ref: "#/components/schemas/ConsumerGroupState"
+        count:
+          type: integer
+          format: int64
+
     ConsumerGroupsPageResponse:
       type: object
       properties:
         pageCount:
           type: integer
+        consumerGroupStats:
+          type: array
+          items:
+            $ref: '#/components/schemas/ConsumerGroupStateStat'
         consumerGroups:
           type: array
           items:
             $ref: '#/components/schemas/ConsumerGroup'
+
 
     SmartFilterTestExecution:
       type: object

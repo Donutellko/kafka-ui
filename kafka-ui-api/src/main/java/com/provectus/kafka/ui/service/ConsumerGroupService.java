@@ -3,7 +3,9 @@ package com.provectus.kafka.ui.service;
 import com.google.common.collect.Streams;
 import com.google.common.collect.Table;
 import com.provectus.kafka.ui.emitter.EnhancedConsumer;
+import com.provectus.kafka.ui.mapper.ConsumerGroupMapper;
 import com.provectus.kafka.ui.model.ConsumerGroupOrderingDTO;
+import com.provectus.kafka.ui.model.ConsumerGroupStateStatDTO;
 import com.provectus.kafka.ui.model.InternalConsumerGroup;
 import com.provectus.kafka.ui.model.InternalTopicConsumerGroup;
 import com.provectus.kafka.ui.model.KafkaCluster;
@@ -97,10 +99,24 @@ public class ConsumerGroupService {
     return hasActiveMembersForTopic || hasCommittedOffsets;
   }
 
-  public record ConsumerGroupsPage(List<InternalConsumerGroup> consumerGroups, int totalPages) {
+  public record ConsumerGroupsPage(List<InternalConsumerGroup> consumerGroups,
+                                   List<ConsumerGroupStateStatDTO> consumerGroupStats,
+                                   int totalPages) {
   }
 
   private record GroupWithDescr(InternalConsumerGroup icg, ConsumerGroupDescription cgd) {
+  }
+
+  private List<ConsumerGroupStateStatDTO> loadConsumerGroupStats(List<ConsumerGroupListing> allGroups) {
+    return allGroups.stream()
+        .collect(Collectors.groupingBy(
+            g -> g.state().orElse(ConsumerGroupState.UNKNOWN),
+            Collectors.counting()
+        )).entrySet().stream()
+        .map(g -> new ConsumerGroupStateStatDTO()
+            .state(ConsumerGroupMapper.mapConsumerGroupState(g.getKey()))
+            .count(g.getValue()))
+        .collect(Collectors.toList());
   }
 
   public Mono<ConsumerGroupsPage> getConsumerGroupsPage(
@@ -126,6 +142,7 @@ public class ConsumerGroupService {
                     .flatMap(descriptions -> getConsumerGroups(ac, descriptions)
                         .map(page -> new ConsumerGroupsPage(
                             page,
+                            loadConsumerGroupStats(allGroups),
                             (allGroups.size() / perPage) + (allGroups.size() % perPage == 0 ? 0 : 1))))));
   }
 

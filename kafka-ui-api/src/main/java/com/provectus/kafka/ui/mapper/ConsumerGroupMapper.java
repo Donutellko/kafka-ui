@@ -97,7 +97,7 @@ public class ConsumerGroupMapper {
     return new BrokerDTO().host(node.host()).id(node.id()).port(node.port());
   }
 
-  private static ConsumerGroupStateDTO mapConsumerGroupState(
+  public static ConsumerGroupStateDTO mapConsumerGroupState(
       org.apache.kafka.common.ConsumerGroupState state) {
     switch (state) {
       case DEAD:
