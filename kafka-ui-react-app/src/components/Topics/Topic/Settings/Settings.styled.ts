@@ -1,5 +1,9 @@
 import styled, { css } from 'styled-components';
 
+export const SettingsWrapper = styled.div`
+  margin-top: 20px;
+`;
+
 export const Value = styled.span<{ $hasCustomValue?: boolean }>(
   ({ $hasCustomValue }) => css`
     font-weight: ${$hasCustomValue ? 500 : 400};

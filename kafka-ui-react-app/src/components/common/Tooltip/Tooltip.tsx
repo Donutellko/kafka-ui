@@ -36,6 +36,7 @@ const Tooltip: React.FC<TooltipProps> = ({ value, content, placement }) => {
             top: y ?? 0,
             left: x ?? 0,
             width: 'max-content',
+            maxWidth: '300px',
           }}
           {...getFloatingProps()}
         >

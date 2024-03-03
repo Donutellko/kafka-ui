@@ -5,6 +5,7 @@ import Settings from 'components/Topics/Topic/Settings/Settings';
 import { clusterTopicSettingsPath } from 'lib/paths';
 import { topicConfigPayload } from 'lib/fixtures/topics';
 import { useTopicConfig } from 'lib/hooks/api/topics';
+import userEvent from '@testing-library/user-event';
 
 const clusterName = 'Cluster_Name';
 const topicName = 'Topic_Name';
@@ -39,5 +40,32 @@ describe('Settings', () => {
     expect(getName()).toHaveStyle('font-weight: 400');
     expect(getValue()).toBeInTheDocument();
     expect(getValue()).toHaveStyle('font-weight: 400');
+  });
+
+  it('renders search input', async () => {
+    expect(
+      screen.getByPlaceholderText('Search by Setting Name')
+    ).toBeInTheDocument();
+  });
+
+  it('handles switch of show custom values', async () => {
+    const switchInput = screen.getByLabelText('Show Only Customized Values');
+    expect(switchInput).toBeInTheDocument();
+
+    await userEvent.click(switchInput);
+    expect(screen.getAllByRole('row').length).toEqual(2);
+    await userEvent.click(switchInput);
+    expect(screen.getAllByRole('row').length).toEqual(
+      topicConfigPayload.length + 1
+    );
+  });
+
+  it('filters with search value', async () => {
+    const searchbox = screen.getByPlaceholderText('Search by Setting Name');
+    expect(searchbox).toBeInTheDocument();
+    expect(searchbox).toHaveValue('');
+
+    await userEvent.type(searchbox, 'compres');
+    expect(searchbox).toHaveValue('compres');
   });
 });
