@@ -29,6 +29,7 @@ describe('ACLList Component', () => {
       beforeEach(() => {
         (useAcls as jest.Mock).mockImplementation(() => ({
           data: aclPayload,
+          isSuccess: true,
         }));
         (useDeleteAcl as jest.Mock).mockImplementation(() => ({
           deleteResource: jest.fn(),
@@ -49,6 +50,44 @@ describe('ACLList Component', () => {
         expect(deleteElement).not.toHaveStyle({
           fill: 'transparent',
         });
+      });
+
+      it('filters by principal', async () => {
+        renderComponent();
+        const principalsSpan = screen.getByText('All Principals');
+        expect(principalsSpan).toBeInTheDocument();
+        await userEvent.click(principalsSpan);
+        expect(screen.getByRole('listbox')).toBeInTheDocument();
+        const options = screen.getAllByRole('option');
+        expect(options).toHaveLength(4);
+        await userEvent.click(options[2]);
+        expect(screen.getAllByRole('row').length).toEqual(3);
+        await userEvent.click(principalsSpan);
+        expect(screen.queryByRole('listbox')).not.toBeInTheDocument();
+      });
+
+      it('filters by resource type', async () => {
+        renderComponent();
+        const resourceTypeSpan = screen.getByText('All Resource Types');
+        expect(resourceTypeSpan).toBeInTheDocument();
+        await userEvent.click(resourceTypeSpan);
+        expect(screen.getByRole('listbox')).toBeInTheDocument();
+        const options = screen.getAllByRole('option');
+        expect(options).toHaveLength(2);
+        await userEvent.click(options[1]);
+        expect(screen.getAllByRole('row').length).toEqual(2);
+        await userEvent.click(resourceTypeSpan);
+        expect(screen.queryByRole('listbox')).not.toBeInTheDocument();
+      });
+
+      it('filters by resource name', async () => {
+        renderComponent();
+        const searchbox = screen.getByPlaceholderText('Search by Resource Name');
+        expect(searchbox).toBeInTheDocument();
+        expect(searchbox).toHaveValue('');
+
+        await userEvent.type(searchbox, 'res');
+        expect(searchbox).toHaveValue('res');
       });
     });
 

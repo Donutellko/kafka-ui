@@ -9,7 +9,7 @@ import {
 export const aclPayload: KafkaAcl[] = [
   {
     principal: 'User 1',
-    resourceName: 'Topic',
+    resourceName: 'Topic 1',
     resourceType: KafkaAclResourceType.TOPIC,
     host: '_host1',
     namePatternType: KafkaAclNamePatternType.LITERAL,
@@ -18,7 +18,7 @@ export const aclPayload: KafkaAcl[] = [
   },
   {
     principal: 'User 2',
-    resourceName: 'Topic',
+    resourceName: 'Topic 2',
     resourceType: KafkaAclResourceType.TOPIC,
     host: '_host1',
     namePatternType: KafkaAclNamePatternType.PREFIXED,
@@ -27,7 +27,7 @@ export const aclPayload: KafkaAcl[] = [
   },
   {
     principal: 'User 3',
-    resourceName: 'Topic',
+    resourceName: 'Topic 1',
     resourceType: KafkaAclResourceType.TOPIC,
     host: '_host1',
     namePatternType: KafkaAclNamePatternType.LITERAL,

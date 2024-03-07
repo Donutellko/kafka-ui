@@ -66,7 +66,7 @@ const Settings: React.FC = () => {
         (d) =>
           (query === null ||
             query === '' ||
-            d.name.toLowerCase().includes(query.toLocaleLowerCase())) &&
+            d.name.toLocaleLowerCase().includes(query.toLocaleLowerCase())) &&
           (!showCustom || (!!d.defaultValue && d.value !== d.defaultValue))
       )
     );
