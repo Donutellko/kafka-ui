@@ -82,7 +82,9 @@ describe('ACLList Component', () => {
 
       it('filters by resource name', async () => {
         renderComponent();
-        const searchbox = screen.getByPlaceholderText('Search by Resource Name');
+        const searchbox = screen.getByPlaceholderText(
+          'Search by Resource Name'
+        );
         expect(searchbox).toBeInTheDocument();
         expect(searchbox).toHaveValue('');
 

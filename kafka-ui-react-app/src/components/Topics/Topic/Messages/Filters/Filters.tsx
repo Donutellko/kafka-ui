@@ -533,9 +533,7 @@ const Filters: React.FC<FiltersProps> = ({
               onChange={setSelectedPartitions}
               labelledBy="Select partitions"
               disabled={isTailing}
-              overrideStrings={
-                {allItemsAreSelected: "All Partitions"}
-              }
+              overrideStrings={{ allItemsAreSelected: 'All Partitions' }}
             />
           </div>
           <S.RefreshIconContainer

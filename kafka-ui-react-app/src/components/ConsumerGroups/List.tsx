@@ -98,30 +98,31 @@ const List = () => {
       <PageHeading text="Consumers" />
       <Metrics.Wrapper>
         <Metrics.Section>
-          <Metrics.Indicator
-            label="Total">
-            {
-              consumerGroups.data?.consumerGroupStats?.
-                reduce((accumulator, currentValue) => accumulator + (currentValue.count || 0), 0)
-            }
+          <Metrics.Indicator label="Total">
+            {consumerGroups.data?.consumerGroupStats?.reduce(
+              (accumulator, currentValue) =>
+                accumulator + (currentValue.count || 0),
+              0
+            )}
           </Metrics.Indicator>
-          {
-            consumerGroups.data?.consumerGroupStats?.map((s) => 
-            (
-              <Metrics.Indicator
-                label={
-                  <Tooltip
-                    value={<Tag color={getTagColor(s.state)}>{s.state}</Tag>}
-                    content={CONSUMER_GROUP_STATE_TOOLTIPS[s.state || ConsumerGroupState.UNKNOWN]}
-                    placement="top-start"
-                  />
-                }
-              >
-                {s.count}
-               </Metrics.Indicator>
-            ))
-          }
-          
+          {consumerGroups.data?.consumerGroupStats?.map((s) => (
+            <Metrics.Indicator
+              key={s.state}
+              label={
+                <Tooltip
+                  value={<Tag color={getTagColor(s.state)}>{s.state}</Tag>}
+                  content={
+                    CONSUMER_GROUP_STATE_TOOLTIPS[
+                      s.state || ConsumerGroupState.UNKNOWN
+                    ]
+                  }
+                  placement="top-start"
+                />
+              }
+            >
+              {s.count}
+            </Metrics.Indicator>
+          ))}
         </Metrics.Section>
       </Metrics.Wrapper>
       <ControlPanelWrapper hasInput>

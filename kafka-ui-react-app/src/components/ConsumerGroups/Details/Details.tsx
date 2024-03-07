@@ -25,9 +25,9 @@ import {
 } from 'lib/hooks/api/consumers';
 import Tooltip from 'components/common/Tooltip/Tooltip';
 import { CONSUMER_GROUP_STATE_TOOLTIPS } from 'lib/constants';
+import Switch from 'components/common/Switch/Switch';
 
 import ListItem from './ListItem';
-import Switch from 'components/common/Switch/Switch';
 
 const Details: React.FC = () => {
   const navigate = useNavigate();
@@ -58,7 +58,7 @@ const Details: React.FC = () => {
 
   const filteredPartitionsByLag = consumerGroup.data?.partitions?.filter(
     (p) => !showLagging || (p.consumerLag && p.consumerLag > 0)
-  )
+  );
 
   const partitionsByTopic = groupBy(filteredPartitionsByLag, 'topic');
   const currentPartitionsByTopic = Object.keys(partitionsByTopic).filter(

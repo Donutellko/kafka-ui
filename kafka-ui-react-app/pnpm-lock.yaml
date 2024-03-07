@@ -77,6 +77,9 @@ dependencies:
   react-ace:
     specifier: ^10.1.0
     version: 10.1.0(react-dom@18.1.0)(react@18.2.0)
+  react-csv-downloader:
+    specifier: ^3.1.0
+    version: 3.1.0(react@18.2.0)
   react-datepicker:
     specifier: ^4.10.0
     version: 4.10.0(react-dom@18.1.0)(react@18.2.0)
@@ -3805,6 +3808,10 @@ packages:
       flat-cache: 3.0.4
     dev: true
 
+  /file-saver@2.0.5:
+    resolution: {integrity: sha512-P9bmyZ3h/PRG+Nzga+rbdI4OEpNDzAVyy74uVO9ATgzLK6VtAsYybF/+TOCvrc0MO793d6+42lLyZTw7/ArVzA==}
+    dev: false
+
   /filelist@1.0.4:
     resolution: {integrity: sha512-w1cEuf3S+DrLCQL7ET6kz+gmlJdbq9J7yXCSjK/OZCPA+qEN1WyF4ZAf0YYJa4/shHJra2t/d/r8SV4Ji+x+8Q==}
     dependencies:
@@ -5841,6 +5848,16 @@ packages:
       prop-types: 15.8.1
       react: 18.2.0
       react-dom: 18.1.0(react@18.2.0)
+    dev: false
+
+  /react-csv-downloader@3.1.0(react@18.2.0):
+    resolution: {integrity: sha512-ART4CNMU89Y5OZQp9gR3IUlVt541djWwRfokQY+CYsGQjHNZFJAk6FvgOwLUNG0o/CxeUdexYjnMMFinMv4Xjg==}
+    engines: {npm: '>=7.0.0'}
+    peerDependencies:
+      react: ^16.6.3 || ^17.0.0 || ^18.0.0
+    dependencies:
+      file-saver: 2.0.5
+      react: 18.2.0
     dev: false
 
   /react-datepicker@4.10.0(react-dom@18.1.0)(react@18.2.0):

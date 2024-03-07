@@ -13,13 +13,16 @@ import {
   KafkaAclNamePatternType,
   KafkaAclPermissionEnum,
 } from 'generated-sources';
-
-import * as S from './List.styled';
 import { ControlPanelWrapper } from 'components/common/ControlPanel/ControlPanel.styled';
 import Search from 'components/common/Search/Search';
 import MultiSelect from 'components/common/MultiSelect/MultiSelect.styled';
 import { Option } from 'react-multi-select-component';
 import { useSearchParams } from 'react-router-dom';
+import CsvDownloader from 'react-csv-downloader';
+import { Button } from 'components/common/Button/Button';
+import ArrowDownIcon from 'components/common/Icons/ArrowDownIcon';
+
+import * as S from './List.styled';
 
 const ACList: React.FC = () => {
   const { clusterName } = useAppParams<{ clusterName: ClusterName }>();
@@ -27,7 +30,7 @@ const ACList: React.FC = () => {
   const { data: aclList, isSuccess } = useAcls(clusterName);
   const { deleteResource } = useDeleteAcl(clusterName);
   const modal = useConfirm(true);
-  const [searchParams,setSearchParams] = useSearchParams();
+  const [searchParams, setSearchParams] = useSearchParams();
 
   const [rowId, setRowId] = React.useState('');
 
@@ -142,107 +145,145 @@ const ACList: React.FC = () => {
     }
   };
 
-  const [distinctPrincipals, setDistinctPrincipals] = React.useState<Option[]>();
-  const [selectedPrincipals, setSelectedPrincipals] = React.useState<Option[]>();
+  const [distinctPrincipals, setDistinctPrincipals] =
+    React.useState<Option[]>();
+  const [selectedPrincipals, setSelectedPrincipals] =
+    React.useState<Option[]>();
 
   React.useEffect(() => {
-    if(!isSuccess)
-      return;
-    setDistinctPrincipals([...new Set(aclList?.map((a) => a.principal))].map((p) => ({
-      label: p,
-      value: p,
-    })));
-  }, [isSuccess, aclList])
+    if (!isSuccess) return;
+    setDistinctPrincipals(
+      [...new Set(aclList?.map((a) => a.principal))].map((p) => ({
+        label: p,
+        value: p,
+      }))
+    );
+  }, [isSuccess, aclList]);
 
   const handleSelectPrincipals = (options: Option[] | undefined) => {
     const selected = options?.filter((o) => o.value);
-    if(selected && selected.length !== distinctPrincipals?.length)
+    if (selected && selected.length !== distinctPrincipals?.length)
       searchParams.set('principals', selected?.map((s) => s.value).join(','));
-    else
-      searchParams.delete('principals')
+    else searchParams.delete('principals');
     setSearchParams(searchParams);
-  }
+  };
 
   React.useEffect(() => {
     const principals = searchParams.get('principals');
-    if(!principals && principals !== '') {
+    if (!principals && principals !== '') {
       setSelectedPrincipals(distinctPrincipals);
       return;
     }
-    setSelectedPrincipals(principals?.split(',')?.map((r) => ({
-      label: r,
-      value: r,
-    })));
-  }, [searchParams, distinctPrincipals, setSelectedPrincipals])
+    setSelectedPrincipals(
+      principals?.split(',')?.map((r) => ({
+        label: r,
+        value: r,
+      }))
+    );
+  }, [searchParams, distinctPrincipals, setSelectedPrincipals]);
 
-  const [distinctResourceTypes, setDistinctResourceTypes] = React.useState<Option[]>();
-  const [selectedResourceTypes, setSelectedResourceTypes] = React.useState<Option[]>();
+  const [distinctResourceTypes, setDistinctResourceTypes] =
+    React.useState<Option[]>();
+  const [selectedResourceTypes, setSelectedResourceTypes] =
+    React.useState<Option[]>();
 
   React.useEffect(() => {
-    if(!isSuccess)
-      return;
-    setDistinctResourceTypes([...new Set(aclList?.map((a) => a.resourceType))].map((p) => ({
-      label: p,
-      value: p,
-    })));
-  }, [isSuccess,aclList])
+    if (!isSuccess) return;
+    setDistinctResourceTypes(
+      [...new Set(aclList?.map((a) => a.resourceType))].map((p) => ({
+        label: p,
+        value: p,
+      }))
+    );
+  }, [isSuccess, aclList]);
 
   const handleSelectResourceTypes = (options: Option[] | undefined) => {
     const selected = options?.filter((o) => o.value);
-    if(selected && selected.length !== distinctResourceTypes?.length)
-      searchParams.set('resourceTypes', selected?.map((s) => s.value).join(','));
-    else
-      searchParams.delete('resourceTypes')
+    if (selected && selected.length !== distinctResourceTypes?.length)
+      searchParams.set(
+        'resourceTypes',
+        selected?.map((s) => s.value).join(',')
+      );
+    else searchParams.delete('resourceTypes');
     setSearchParams(searchParams);
-  }
+  };
 
   React.useEffect(() => {
     const resourceTypes = searchParams.get('resourceTypes');
-    if(!resourceTypes && resourceTypes !== ''){
+    if (!resourceTypes && resourceTypes !== '') {
       setSelectedResourceTypes(distinctResourceTypes);
       return;
     }
-      
-    setSelectedResourceTypes(resourceTypes.split(',')?.map((r) => ({
-      label: r,
-      value: r,
-    })));
-      
-  }, [searchParams, distinctResourceTypes, setSelectedResourceTypes])
 
+    setSelectedResourceTypes(
+      resourceTypes.split(',')?.map((r) => ({
+        label: r,
+        value: r,
+      }))
+    );
+  }, [searchParams, distinctResourceTypes, setSelectedResourceTypes]);
 
   const [filteredAcls, setFilteredAcls] = React.useState<KafkaAcl[]>();
 
   React.useEffect(() => {
-    if(!isSuccess)
-      return;
+    if (!isSuccess) return;
     const principals = searchParams.get('principals')?.split(',');
     const resourceTypes = searchParams.get('resourceTypes')?.split(',');
     const resourceName = searchParams.get('q')?.toLocaleLowerCase() || '';
 
-    setFilteredAcls(aclList?.
-      filter((a) => (!principals || principals.includes(a.principal)) &&
-                  (!resourceTypes || resourceTypes.includes(a.resourceType)) &&
-                  (resourceName === '' || a.resourceName.toLocaleLowerCase().includes(resourceName))));
-  },[isSuccess, aclList,searchParams])
+    setFilteredAcls(
+      aclList?.filter(
+        (a) =>
+          (!principals || principals.includes(a.principal)) &&
+          (!resourceTypes || resourceTypes.includes(a.resourceType)) &&
+          (resourceName === '' ||
+            a.resourceName.toLocaleLowerCase().includes(resourceName))
+      )
+    );
+  }, [isSuccess, aclList, searchParams]);
 
+  const downloadAcls = (): { [key: string]: string | null | undefined }[] => {
+    const acls =
+      filteredAcls?.map((a) => {
+        const acl: { [key: string]: string | null | undefined } = {};
+        columns.forEach((c) => {
+          const { accessorKey } = c as { accessorKey?: string };
+          if (accessorKey) acl[accessorKey] = a[accessorKey as keyof KafkaAcl];
+        });
+        return acl;
+      }) || [];
+    return acls;
+  };
+
+  const downloadColumnsDef = () => {
+    return (
+      columns
+        .filter((c) => {
+          const col = c as { accessorKey?: string; header?: string };
+          return col.accessorKey && col.header;
+        })
+        .map((c) => {
+          const col = c as { accessorKey: string; header: string };
+          return {
+            displayName: col.header,
+            id: col.accessorKey,
+          };
+        }) || []
+    );
+  };
 
   return (
     <>
       <PageHeading text="Access Control List" />
       <ControlPanelWrapper hasInput style={{ margin: '16px 0 20px' }}>
-        <Search 
-          placeholder="Search by Resource Name"
-        />
+        <Search placeholder="Search by Resource Name" />
         <MultiSelect
           options={distinctPrincipals || []}
           // filterOptions={filterOptions}
           value={selectedPrincipals || []}
           onChange={handleSelectPrincipals}
           labelledBy="Select Principals"
-          overrideStrings={
-            {allItemsAreSelected: "All Principals"}
-          }
+          overrideStrings={{ allItemsAreSelected: 'All Principals' }}
         />
         <MultiSelect
           options={distinctResourceTypes || []}
@@ -250,10 +291,18 @@ const ACList: React.FC = () => {
           value={selectedResourceTypes || []}
           onChange={handleSelectResourceTypes}
           labelledBy="Select Resource Types"
-          overrideStrings={
-            {allItemsAreSelected: "All Resource Types"}
-          }
+          overrideStrings={{ allItemsAreSelected: 'All Resource Types' }}
         />
+        <CsvDownloader
+          filename="ACL List"
+          datas={downloadAcls}
+          columns={downloadColumnsDef()}
+        >
+          <Button buttonType="secondary" buttonSize="M">
+            <ArrowDownIcon />
+            Download
+          </Button>
+        </CsvDownloader>
       </ControlPanelWrapper>
       <Table
         columns={columns}
@@ -261,7 +310,7 @@ const ACList: React.FC = () => {
         emptyMessage="No ACL items found"
         onRowHover={onRowHover}
         onMouseLeave={() => setRowId('')}
-        />
+      />
     </>
   );
 };
