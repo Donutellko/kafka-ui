@@ -327,9 +327,6 @@ const Filters: React.FC<FiltersProps> = ({
     ) {
       setTimestamp(value as Date | null);
     }
-    // setPage(1);
-    // resetAllMessages();
-    // handleFiltersSubmit();
   };
 
   // eslint-disable-next-line consistent-return

@@ -8,6 +8,7 @@ import {
   clusterConnectorsPath,
   clusterKsqlDbPath,
   clusterACLPath,
+  clusterClientQuotasPath,
 } from 'lib/paths';
 
 import ClusterMenuItem from './ClusterMenuItem';
@@ -61,6 +62,14 @@ const ClusterMenu: React.FC<Props> = ({
           {(hasFeatureConfigured(ClusterFeaturesEnum.KAFKA_ACL_VIEW) ||
             hasFeatureConfigured(ClusterFeaturesEnum.KAFKA_ACL_EDIT)) && (
             <ClusterMenuItem to={clusterACLPath(name)} title="ACL" />
+          )}
+          {hasFeatureConfigured(
+            ClusterFeaturesEnum.CLIENT_QUOTA_MANAGEMENT
+          ) && (
+            <ClusterMenuItem
+              to={clusterClientQuotasPath(name)}
+              title="Quotas"
+            />
           )}
         </S.List>
       )}

@@ -145,19 +145,12 @@ const ACList: React.FC = () => {
     }
   };
 
-  const [distinctPrincipals, setDistinctPrincipals] =
-    React.useState<Option[]>();
-  const [selectedPrincipals, setSelectedPrincipals] =
-    React.useState<Option[]>();
-
-  React.useEffect(() => {
-    if (!isSuccess) return;
-    setDistinctPrincipals(
-      [...new Set(aclList?.map((a) => a.principal))].map((p) => ({
-        label: p,
-        value: p,
-      }))
-    );
+  const distinctPrincipals = React.useMemo(() => {
+    if (!isSuccess) return [];
+    return [...new Set(aclList?.map((a) => a.principal))].map((p) => ({
+      label: p,
+      value: p,
+    }));
   }, [isSuccess, aclList]);
 
   const handleSelectPrincipals = (options: Option[] | undefined) => {
@@ -168,33 +161,23 @@ const ACList: React.FC = () => {
     setSearchParams(searchParams);
   };
 
-  React.useEffect(() => {
+  const selectedPrincipals = React.useMemo(() => {
     const principals = searchParams.get('principals');
     if (!principals && principals !== '') {
-      setSelectedPrincipals(distinctPrincipals);
-      return;
+      return distinctPrincipals;
     }
-    setSelectedPrincipals(
-      principals?.split(',')?.map((r) => ({
-        label: r,
-        value: r,
-      }))
-    );
-  }, [searchParams, distinctPrincipals, setSelectedPrincipals]);
+    return principals?.split(',')?.map((r) => ({
+      label: r,
+      value: r,
+    }));
+  }, [searchParams, distinctPrincipals]);
 
-  const [distinctResourceTypes, setDistinctResourceTypes] =
-    React.useState<Option[]>();
-  const [selectedResourceTypes, setSelectedResourceTypes] =
-    React.useState<Option[]>();
-
-  React.useEffect(() => {
-    if (!isSuccess) return;
-    setDistinctResourceTypes(
-      [...new Set(aclList?.map((a) => a.resourceType))].map((p) => ({
-        label: p,
-        value: p,
-      }))
-    );
+  const distinctResourceTypes = React.useMemo(() => {
+    if (!isSuccess) return [];
+    return [...new Set(aclList?.map((a) => a.resourceType))].map((p) => ({
+      label: p,
+      value: p,
+    }));
   }, [isSuccess, aclList]);
 
   const handleSelectResourceTypes = (options: Option[] | undefined) => {
@@ -208,37 +191,30 @@ const ACList: React.FC = () => {
     setSearchParams(searchParams);
   };
 
-  React.useEffect(() => {
+  const selectedResourceTypes = React.useMemo(() => {
     const resourceTypes = searchParams.get('resourceTypes');
     if (!resourceTypes && resourceTypes !== '') {
-      setSelectedResourceTypes(distinctResourceTypes);
-      return;
+      return distinctResourceTypes;
     }
 
-    setSelectedResourceTypes(
-      resourceTypes.split(',')?.map((r) => ({
-        label: r,
-        value: r,
-      }))
-    );
-  }, [searchParams, distinctResourceTypes, setSelectedResourceTypes]);
+    return resourceTypes.split(',')?.map((r) => ({
+      label: r,
+      value: r,
+    }));
+  }, [searchParams, distinctResourceTypes]);
 
-  const [filteredAcls, setFilteredAcls] = React.useState<KafkaAcl[]>();
-
-  React.useEffect(() => {
-    if (!isSuccess) return;
+  const filteredAcls = React.useMemo(() => {
+    if (!isSuccess) return [];
     const principals = searchParams.get('principals')?.split(',');
     const resourceTypes = searchParams.get('resourceTypes')?.split(',');
     const resourceName = searchParams.get('q')?.toLocaleLowerCase() || '';
 
-    setFilteredAcls(
-      aclList?.filter(
-        (a) =>
-          (!principals || principals.includes(a.principal)) &&
-          (!resourceTypes || resourceTypes.includes(a.resourceType)) &&
-          (resourceName === '' ||
-            a.resourceName.toLocaleLowerCase().includes(resourceName))
-      )
+    return aclList?.filter(
+      (a) =>
+        (!principals || principals.includes(a.principal)) &&
+        (!resourceTypes || resourceTypes.includes(a.resourceType)) &&
+        (resourceName === '' ||
+          a.resourceName.toLocaleLowerCase().includes(resourceName))
     );
   }, [isSuccess, aclList, searchParams]);
 

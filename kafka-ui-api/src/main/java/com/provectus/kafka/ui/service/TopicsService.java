@@ -29,6 +29,7 @@ import java.time.Duration;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -151,7 +152,13 @@ public class TopicsService {
                             new InternalPartitionsOffsets.Offsets(
                                 earliest.get(tp), latest.get(tp))))
                     .collect(toMap(Map.Entry::getKey, Map.Entry::getValue)))
-        .map(InternalPartitionsOffsets::new);
+        // .map(InternalPartitionsOffsets::new);
+        .flatMap(offsetsMap -> {
+          Map<TopicPartition, InternalPartitionsOffsets.Offsets> convertedMap = new HashMap<>();
+          offsetsMap.forEach(
+              (tp, offsets) -> convertedMap.put((TopicPartition) tp, (InternalPartitionsOffsets.Offsets) offsets));
+          return Mono.just(new InternalPartitionsOffsets(convertedMap));
+        });
   }
 
   public Mono<InternalTopic> getTopicDetails(KafkaCluster cluster, String topicName) {

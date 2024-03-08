@@ -14,6 +14,7 @@ import {
   clusterConfigRelativePath,
   getNonExactPath,
   clusterAclRelativePath,
+  clusterClientQuotasRelativePath,
 } from 'lib/paths';
 import ClusterContext from 'components/contexts/ClusterContext';
 import PageLoader from 'components/common/PageLoader/PageLoader';
@@ -32,6 +33,9 @@ const ConsumerGroups = React.lazy(
   () => import('components/ConsumerGroups/ConsumerGroups')
 );
 const AclPage = React.lazy(() => import('components/ACLPage/ACLPage'));
+const ClientQuotas = React.lazy(
+  () => import('components/ClientQuotas/ClientQuotas')
+);
 
 const ClusterPage: React.FC = () => {
   const { clusterName } = useAppParams<ClusterNameRoute>();
@@ -56,6 +60,9 @@ const ClusterPage: React.FC = () => {
       hasAclViewConfigured:
         features.includes(ClusterFeaturesEnum.KAFKA_ACL_VIEW) ||
         features.includes(ClusterFeaturesEnum.KAFKA_ACL_EDIT),
+      hasClientQuotaManagementConfigured: features.includes(
+        ClusterFeaturesEnum.CLIENT_QUOTA_MANAGEMENT
+      ),
     };
   }, [clusterName, data]);
 
@@ -104,6 +111,12 @@ const ClusterPage: React.FC = () => {
               <Route
                 path={getNonExactPath(clusterAclRelativePath)}
                 element={<AclPage />}
+              />
+            )}
+            {contextValue.hasClientQuotaManagementConfigured && (
+              <Route
+                path={getNonExactPath(clusterClientQuotasRelativePath)}
+                element={<ClientQuotas />}
               />
             )}
             {appInfo.hasDynamicConfig && (

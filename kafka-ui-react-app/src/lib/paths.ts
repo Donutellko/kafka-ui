@@ -298,3 +298,9 @@ export const clusterAclNewRelativePath = 'create-new-acl';
 export const clusterACLPath = (
   clusterName: ClusterName = RouteParams.clusterName
 ) => `${clusterPath(clusterName)}/${clusterAclRelativePath}`;
+
+// Client Quotas
+export const clusterClientQuotasRelativePath = 'quotas';
+export const clusterClientQuotasPath = (
+  clusterName: ClusterName = RouteParams.clusterName
+) => `${clusterPath(clusterName)}/${clusterClientQuotasRelativePath}`;
