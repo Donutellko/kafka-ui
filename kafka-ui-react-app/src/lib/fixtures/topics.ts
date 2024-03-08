@@ -5,6 +5,11 @@ import {
   Topic,
   TopicConfig,
   TopicAnalysis,
+  KafkaAcl,
+  KafkaAclResourceType,
+  KafkaAclNamePatternType,
+  KafkaAclPermissionEnum,
+  KafkaAclOperationEnum,
 } from 'generated-sources';
 
 export const internalTopicPayload = {
@@ -74,6 +79,27 @@ export const topicConsumerGroups: ConsumerGroup[] = [
     state: ConsumerGroupState.COMPLETING_REBALANCE,
     coordinator: { id: 1 },
     consumerLag: 9,
+  },
+];
+
+export const topicAcls: KafkaAcl[] = [
+  {
+    principal: 'User 1',
+    resourceName: 'Topic 1',
+    resourceType: KafkaAclResourceType.TOPIC,
+    host: '_host1',
+    namePatternType: KafkaAclNamePatternType.LITERAL,
+    permission: KafkaAclPermissionEnum.ALLOW,
+    operation: KafkaAclOperationEnum.READ,
+  },
+  {
+    principal: 'User 2',
+    resourceName: 'Topic',
+    resourceType: KafkaAclResourceType.TOPIC,
+    host: '_host1',
+    namePatternType: KafkaAclNamePatternType.PREFIXED,
+    permission: KafkaAclPermissionEnum.ALLOW,
+    operation: KafkaAclOperationEnum.READ,
   },
 ];
 

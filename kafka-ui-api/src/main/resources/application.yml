@@ -32,9 +32,11 @@ kafka:
           jaas.config: 'org.apache.kafka.common.security.plain.PlainLoginModule required username="admin" password="admin-secret";'
       schemaRegistry: http://localhost:8081
 #      ksqldbServer: http://localhost:8088
-#      kafkaConnect:
-#        - name: first
-#          address: http://localhost:8083
-#      metrics:
-#        port: 9997
-#        type: JMX
+      kafkaConnect:
+        - name: datagen
+          address: http://localhost:8083
+        - name: connect-cluster-2
+          address: http://localhost:8084
+      metrics:
+        port: 9997
+        type: JMX

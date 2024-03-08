@@ -3,6 +3,7 @@ import {
   messagesApiClient as messagesApi,
   consumerGroupsApiClient,
   messagesApiClient,
+  aclApiClient,
 } from 'lib/api';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import {
@@ -15,6 +16,7 @@ import {
   CreateTopicMessage,
   GetTopicDetailsRequest,
   GetTopicsRequest,
+  ListAclsRequest,
   MessageFilterRegistration,
   Topic,
   TopicConfig,
@@ -38,6 +40,14 @@ export const topicKeys = {
     [...topicKeys.details(props), 'schema'] as const,
   consumerGroups: (props: GetTopicDetailsRequest) =>
     [...topicKeys.details(props), 'consumerGroups'] as const,
+  ACLs: (props: ListAclsRequest) =>
+    [
+      ...topicKeys.details({
+        clusterName: props.clusterName,
+        topicName: props.resourceName || '',
+      }),
+      'acls',
+    ] as const,
   statistics: (props: GetTopicDetailsRequest) =>
     [...topicKeys.details(props), 'statistics'] as const,
   filter: (props: GetTopicDetailsRequest) =>
@@ -62,6 +72,9 @@ export function useTopicConsumerGroups(props: GetTopicDetailsRequest) {
   return useQuery(topicKeys.consumerGroups(props), () =>
     consumerGroupsApiClient.getTopicConsumerGroups(props)
   );
+}
+export function useTopicACLs(props: ListAclsRequest) {
+  return useQuery(topicKeys.ACLs(props), () => aclApiClient.listAcls(props));
 }
 
 const topicReducer = (

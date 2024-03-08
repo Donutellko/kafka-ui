@@ -1,6 +1,7 @@
 import React, { Suspense } from 'react';
 import { NavLink, Route, Routes, useNavigate } from 'react-router-dom';
 import {
+  clusterTopicAclsRelativePath,
   clusterTopicConsumerGroupsRelativePath,
   clusterTopicEditRelativePath,
   clusterTopicMessagesRelativePath,
@@ -39,6 +40,7 @@ import TopicConsumerGroups from './ConsumerGroups/TopicConsumerGroups';
 import Statistics from './Statistics/Statistics';
 import Edit from './Edit/Edit';
 import SendMessage from './SendMessage/SendMessage';
+import TopicACLs from './ACL/TopicACLs';
 
 const Topic: React.FC = () => {
   const dispatch = useAppDispatch();
@@ -201,6 +203,17 @@ const Topic: React.FC = () => {
         >
           Settings
         </NavLink>
+        <ActionNavLink
+          to={clusterTopicAclsRelativePath}
+          className={({ isActive }) => (isActive ? 'is-active' : '')}
+          permission={{
+            resource: ResourceType.ACL,
+            action: Action.VIEW,
+            value: topicName,
+          }}
+        >
+          ACL
+        </ActionNavLink>
         <NavLink
           to={clusterTopicStatisticsRelativePath}
           className={({ isActive }) => (isActive ? 'is-active' : '')}
@@ -223,6 +236,7 @@ const Topic: React.FC = () => {
             path={clusterTopicConsumerGroupsRelativePath}
             element={<TopicConsumerGroups />}
           />
+          <Route path={clusterTopicAclsRelativePath} element={<TopicACLs />} />
           <Route
             path={clusterTopicStatisticsRelativePath}
             element={<Statistics />}
