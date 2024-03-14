@@ -1,4 +1,5 @@
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
+import closeIcon from 'components/common/Icons/CloseIcon';
 
 export const Wrapper = styled.div<{ $open?: boolean }>(
   ({ theme, $open }) => `
@@ -33,4 +34,33 @@ export const Content = styled.div<{ $open?: boolean }>(
   right: 0;
   padding: 16px;
 `
+);
+
+export const CloseSidebarIcon = styled.div<{ $open?: boolean }>(
+  ({ theme: { icons } }) => css`
+    color: ${icons.closeIcon.normal};
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 32px;
+    width: 32px;
+    cursor: pointer;
+
+    svg {
+      height: 14px;
+      width: 14px;
+    }
+
+    &:hover {
+      ${closeIcon} {
+        fill: ${icons.closeIcon.hover};
+      }
+    }
+
+    &:active {
+      ${closeIcon} {
+        fill: ${icons.closeIcon.active};
+      }
+    }
+  `
 );

@@ -1,6 +1,6 @@
 import React, { PropsWithChildren } from 'react';
 import Heading from 'components/common/heading/Heading.styled';
-import { Button } from 'components/common/Button/Button';
+import CloseIcon from 'components/common/Icons/CloseIcon';
 
 import * as S from './SlidingSidebar.styled';
 
@@ -20,9 +20,9 @@ const SlidingSidebar: React.FC<SlidingSidebarProps> = ({
     <S.Wrapper $open={open}>
       <Heading level={3}>
         <span>{title}</span>
-        <Button buttonSize="M" buttonType="primary" onClick={onClose}>
-          Close
-        </Button>
+        <S.CloseSidebarIcon onClick={onClose}>
+          <CloseIcon />
+        </S.CloseSidebarIcon>
       </Heading>
       <S.Content>{children}</S.Content>
     </S.Wrapper>

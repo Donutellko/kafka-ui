@@ -2,7 +2,7 @@ import PageLoader from 'components/common/PageLoader/PageLoader';
 import { Table } from 'components/common/table/Table/Table.styled';
 import TableHeaderCell from 'components/common/table/TableHeaderCell/TableHeaderCell';
 import { TopicMessage } from 'generated-sources';
-import React, { useContext, useState } from 'react';
+import React, { Suspense, useContext, useState } from 'react';
 import {
   getTopicMessges,
   getIsTopicMessagesFetching,
@@ -14,9 +14,10 @@ import { useSearchParams } from 'react-router-dom';
 import { MESSAGES_PER_PAGE } from 'lib/constants';
 import * as S from 'components/common/NewTable/Table.styled';
 import { getSerdeOptions } from 'components/Topics/Topic/SendMessage/utils';
+import SlidingSidebar from 'components/common/SlidingSidebar';
 
 import * as SE from './MessagesTable.styled';
-import PreviewModal from './PreviewModal';
+import PreviewFields from './PreviewFields';
 import Message, { PreviewFilter } from './Message';
 
 const MessagesTable: React.FC = () => {
@@ -60,17 +61,6 @@ const MessagesTable: React.FC = () => {
 
   return (
     <div style={{ position: 'relative' }}>
-      {previewFor !== null && (
-        <PreviewModal
-          values={previewFor === 'key' ? keyFilters : contentFilters}
-          toggleIsOpen={() => setPreviewFor(null)}
-          setFilters={(payload: PreviewFilter[]) =>
-            previewFor === 'key'
-              ? setKeyFilters(payload)
-              : setContentFilters(payload)
-          }
-        />
-      )}
       <Table isFullwidth>
         <thead>
           <tr>
@@ -172,6 +162,25 @@ const MessagesTable: React.FC = () => {
           </Button>
         </S.Pages>
       </S.Pagination>
+      <SlidingSidebar
+        open={previewFor !== null}
+        onClose={() => setPreviewFor(null)}
+        title="Field Preview"
+      >
+        {previewFor !== null && (
+          <Suspense fallback={<PageLoader />}>
+            <PreviewFields
+              values={previewFor === 'key' ? keyFilters : contentFilters}
+              toggleIsOpen={() => setPreviewFor(null)}
+              setFilters={(payload: PreviewFilter[]) =>
+                previewFor === 'key'
+                  ? setKeyFilters(payload)
+                  : setContentFilters(payload)
+              }
+            />
+          </Suspense>
+        )}
+      </SlidingSidebar>
     </div>
   );
 };
