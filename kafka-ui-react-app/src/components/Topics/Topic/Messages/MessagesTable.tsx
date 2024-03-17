@@ -6,6 +6,7 @@ import React, { Suspense, useContext, useState } from 'react';
 import {
   getTopicMessges,
   getIsTopicMessagesFetching,
+  getTopicMessgesFields,
 } from 'redux/reducers/topicMessages/selectors';
 import TopicMessagesContext from 'components/contexts/TopicMessagesContext';
 import { useAppSelector } from 'lib/hooks/redux';
@@ -39,6 +40,9 @@ const MessagesTable: React.FC = () => {
   } = useContext(TopicMessagesContext);
 
   const messages = useAppSelector(getTopicMessges);
+  const { messageKeyFields, messageContentFields } = useAppSelector(
+    getTopicMessgesFields
+  );
   const isFetching = useAppSelector(getIsTopicMessagesFetching);
 
   // Pagination is disabled in live mode, also we don't want to show the button
@@ -70,9 +74,13 @@ const MessagesTable: React.FC = () => {
             <TableHeaderCell title="Timestamp" style={{ width: '180px' }} />
             <TableHeaderCell
               title="Key"
-              previewText={`Preview ${
-                keyFilters.length ? `(${keyFilters.length} selected)` : ''
-              }`}
+              previewText={
+                messageKeyFields && messageKeyFields.length === 0
+                  ? ''
+                  : `Preview ${
+                      keyFilters.length ? `(${keyFilters.length} selected)` : ''
+                    }`
+              }
               onPreview={() => setPreviewFor('key')}
               style={{ width: '300px' }}
             >
@@ -91,11 +99,15 @@ const MessagesTable: React.FC = () => {
             </TableHeaderCell>
             <TableHeaderCell
               title="Value"
-              previewText={`Preview ${
-                contentFilters.length
-                  ? `(${contentFilters.length} selected)`
-                  : ''
-              }`}
+              previewText={
+                messageContentFields && messageContentFields.length === 0
+                  ? ''
+                  : `Preview ${
+                      contentFilters.length
+                        ? `(${contentFilters.length} selected)`
+                        : ''
+                    }`
+              }
               onPreview={() => setPreviewFor('content')}
             >
               <SE.SerdeSelectWrapper>
@@ -176,6 +188,9 @@ const MessagesTable: React.FC = () => {
                 previewFor === 'key'
                   ? setKeyFilters(payload)
                   : setContentFilters(payload)
+              }
+              messageFields={
+                previewFor === 'key' ? messageKeyFields : messageContentFields
               }
             />
           </Suspense>

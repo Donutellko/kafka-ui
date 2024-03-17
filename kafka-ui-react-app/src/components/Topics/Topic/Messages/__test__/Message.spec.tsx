@@ -35,12 +35,12 @@ describe('Message component', () => {
     headers: { header: 'test' },
   };
   const mockKeyFilters: PreviewFilter = {
-    field: 'sub',
-    path: '$.payload.subreddit',
+    displayName: 'sub',
+    path: 'payload.subreddit',
   };
   const mockContentFilters: PreviewFilter = {
-    field: 'author',
-    path: '$.payload.author',
+    displayName: 'author',
+    path: 'payload.author',
   };
   const renderComponent = (
     props: Partial<Props> = {
@@ -106,7 +106,11 @@ describe('Message component', () => {
 
   it('should check if Preview filter showing for key', () => {
     const props = {
-      message: { ...mockMessage, key: keyTest as string },
+      message: {
+        ...mockMessage,
+        key: keyTest as string,
+        keyJson: JSON.parse(keyTest),
+      },
       keyFilters: [mockKeyFilters],
     };
     renderComponent(props);
@@ -116,7 +120,11 @@ describe('Message component', () => {
 
   it('should check if Preview filter showing for Value', () => {
     const props = {
-      message: { ...mockMessage, content: contentTest as string },
+      message: {
+        ...mockMessage,
+        content: contentTest as string,
+        contentJson: JSON.parse(contentTest),
+      },
       contentFilters: [mockContentFilters],
     };
     renderComponent(props);

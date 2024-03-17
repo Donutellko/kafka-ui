@@ -9,18 +9,35 @@ export const PreviewFields = styled.div`
   justify-content: space-between;
 
   h4 {
-    margin-bottom: 4px;
+    margin-bottom: 8px;
+    margin-top: 12px;
+    padding-top: 8px;
+    border-top: 1px solid
+      ${({ theme }) => theme.messagePreviewFilter.seperatorColor};
   }
+`;
+
+export const InputWrapper = styled.div`
+  margin-top: 10px;
 `;
 
 export const ButtonWrapper = styled.div`
   width: 100%;
-  height: 40px;
+  height: 64px;
   display: flex;
   justify-content: right;
-  padding-top: 20px;
-  gap: 10px;
-  border-top: 1px solid #f1f2f3;
+  align-items: center;
+  // padding-top: 20px;
+  // margin-top: 20px;
+  // gap: 10px;
+  // border-top: 1px solid
+  //   ${({ theme }) => theme.messagePreviewFilter.seperatorColor};
+`;
+
+export const ContentWrapper = styled.div`
+  height: 100%;
+  border-bottom: 1px solid
+    ${({ theme }) => theme.messagePreviewFilter.seperatorColor};
 `;
 
 export const EditForm = styled.div`

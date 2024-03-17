@@ -3,8 +3,9 @@ import {
   TopicMessageConsuming,
   TopicMessageTimestampTypeEnum,
 } from 'generated-sources';
+import { TopicParsedMessage } from 'redux/interfaces';
 
-export const topicMessagePayload: TopicMessage = {
+export const topicBaseMessagePayload: TopicMessage = {
   partition: 29,
   offset: 14,
   timestamp: new Date('2021-07-21T23:25:14.865Z'),
@@ -15,7 +16,20 @@ export const topicMessagePayload: TopicMessage = {
     '{"host":"schemaregistry1","port":8085,"master_eligibility":true,"scheme":"http","version":1}',
 };
 
-export const topicMessagePayloadV2: TopicMessage = {
+export const topicMessagePayload: TopicParsedMessage = {
+  ...topicBaseMessagePayload,
+  contentJson: JSON.parse(topicBaseMessagePayload.content || '{}'),
+};
+
+export const topicMessageValueFields: string[] = [
+  'host',
+  'port',
+  'master_eligibility',
+  'scheme',
+  'version',
+];
+
+export const topicMessagePayloadV2: TopicParsedMessage = {
   ...topicMessagePayload,
   partition: 28,
   offset: 88,

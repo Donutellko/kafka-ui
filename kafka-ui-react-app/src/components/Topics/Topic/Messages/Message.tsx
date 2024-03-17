@@ -1,6 +1,5 @@
 import React from 'react';
 import useDataSaver from 'lib/hooks/useDataSaver';
-import { TopicMessage } from 'generated-sources';
 import MessageToggleIcon from 'components/common/Icons/MessageToggleIcon';
 import IconButtonWrapper from 'components/common/Icons/IconButtonWrapper';
 import { Dropdown, DropdownItem } from 'components/common/Dropdown';
@@ -9,19 +8,20 @@ import { JSONPath } from 'jsonpath-plus';
 import Ellipsis from 'components/common/Ellipsis/Ellipsis';
 import WarningRedIcon from 'components/common/Icons/WarningRedIcon';
 import Tooltip from 'components/common/Tooltip/Tooltip';
+import { TopicParsedMessage } from 'redux/interfaces';
 
 import MessageContent from './MessageContent/MessageContent';
 import * as S from './MessageContent/MessageContent.styled';
 
 export interface PreviewFilter {
-  field: string;
+  displayName: string;
   path: string;
 }
 
 export interface Props {
   keyFilters: PreviewFilter[];
   contentFilters: PreviewFilter[];
-  message: TopicMessage;
+  message: TopicParsedMessage;
 }
 
 const Message: React.FC<Props> = ({
@@ -37,6 +37,8 @@ const Message: React.FC<Props> = ({
     headers,
     valueSerde,
     keySerde,
+    keyJson,
+    contentJson,
   },
   keyFilters,
   contentFilters,
@@ -61,29 +63,22 @@ const Message: React.FC<Props> = ({
 
   const [vEllipsisOpen, setVEllipsisOpen] = React.useState(false);
 
-  const getParsedJson = (jsonValue: string) => {
-    try {
-      return JSON.parse(jsonValue);
-    } catch (e) {
-      return {};
-    }
-  };
-
   const renderFilteredJson = (
-    jsonValue?: string,
+    rawValue?: string,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    parsedValue?: any,
     filters?: PreviewFilter[]
   ) => {
-    if (!filters?.length || !jsonValue) return jsonValue;
-    const parsedJson = getParsedJson(jsonValue);
+    if (!filters?.length || !rawValue) return rawValue;
 
     return (
       <>
         {filters.map((item) => {
           return (
-            <div key={`${item.path}--${item.field}`}>
-              {item.field}:{' '}
+            <div key={`${item.path}--${item.displayName}`}>
+              {item.displayName || item.path}:{' '}
               {JSON.stringify(
-                JSONPath({ path: item.path, json: parsedJson, wrap: false })
+                JSONPath({ path: item.path, json: parsedValue, wrap: false })
               )}
             </div>
           );
@@ -110,7 +105,7 @@ const Message: React.FC<Props> = ({
           <div>{formatTimestamp(timestamp)}</div>
         </td>
         <S.DataCell title={key}>
-          <Ellipsis text={renderFilteredJson(key, keyFilters)}>
+          <Ellipsis text={renderFilteredJson(key, keyJson, keyFilters)}>
             {keySerde === 'Fallback' && (
               <Tooltip
                 value={<WarningRedIcon />}
@@ -124,7 +119,7 @@ const Message: React.FC<Props> = ({
           <S.Metadata>
             <S.MetadataValue>
               <Ellipsis
-                text={renderFilteredJson(content, contentFilters)}
+                text={renderFilteredJson(content, contentJson, contentFilters)}
                 style={{ maxWidth: '100%' }}
               >
                 {valueSerde === 'Fallback' && (

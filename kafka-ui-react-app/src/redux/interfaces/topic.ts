@@ -52,9 +52,16 @@ export interface TopicFormData {
   }[];
 }
 
+export interface TopicParsedMessage extends TopicMessage {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  keyJson?: any;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  contentJson?: any;
+}
+
 export interface TopicMessagesState {
-  allMessages: TopicMessage[];
-  messages: TopicMessage[];
+  allMessages: TopicParsedMessage[];
+  messages: TopicParsedMessage[];
   phase?: string;
   meta: TopicMessageConsuming;
   messageEventType?: string;
@@ -62,4 +69,6 @@ export interface TopicMessagesState {
   cursor?: TopicMessageNextPageCursor;
   currentPage: number;
   lastLoadedPage: number;
+  messageKeyFields: string[];
+  messageContentFields: string[];
 }

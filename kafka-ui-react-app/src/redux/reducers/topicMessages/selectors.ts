@@ -43,3 +43,13 @@ export const getIsTopicMessagesType = createSelector(
   topicMessagesState,
   ({ messageEventType }) => messageEventType
 );
+
+export const getTopicMessgesFields = createSelector(
+  topicMessagesState,
+  ({ messageKeyFields, messageContentFields }) => {
+    return {
+      messageKeyFields,
+      messageContentFields,
+    };
+  }
+);

@@ -9,6 +9,7 @@ import TopicMessagesContext, {
 } from 'components/contexts/TopicMessagesContext';
 import {
   topicMessagePayload,
+  topicMessageValueFields,
   topicMessagesMetaPayload,
 } from 'redux/reducers/topicMessages/__test__/fixtures';
 import { serdesPayload } from 'lib/fixtures/topicMessages';
@@ -66,6 +67,8 @@ describe('MessagesTable', () => {
             isFetching: !!isFetching,
             lastLoadedPage: 1,
             currentPage: 1,
+            messageKeyFields: [],
+            messageContentFields: topicMessageValueFields,
           },
         },
       }
@@ -82,16 +85,16 @@ describe('MessagesTable', () => {
     });
 
     it('should check preview buttons', async () => {
-      const previewButtons = await screen.findAllByRole('button', {
+      const previewButtons = await screen.findByRole('button', {
         name: 'Preview',
       });
-      expect(previewButtons).toHaveLength(2);
+      expect(previewButtons).toBeInTheDocument();
     });
 
     it('should show preview modal with validation', async () => {
       await userEvent.click(screen.getAllByText('Preview')[0]);
-      expect(screen.getByPlaceholderText('Field')).toHaveValue('');
-      expect(screen.getByPlaceholderText('Json Path')).toHaveValue('');
+      expect(screen.getByPlaceholderText('Display Name')).toHaveValue('');
+      // expect(screen.getByPlaceholderText('Json Path')).toHaveValue('');
     });
 
     it('should check the if no elements is rendered in the table', () => {

@@ -3,10 +3,11 @@ import { Button } from 'components/common/Button/Button';
 import { FormError } from 'components/common/Input/Input.styled';
 import Input from 'components/common/Input/Input';
 import { InputLabel } from 'components/common/Input/InputLabel.styled';
-import IconButtonWrapper from 'components/common/Icons/IconButtonWrapper';
 import EditIcon from 'components/common/Icons/EditIcon';
 import CloseIcon from 'components/common/Icons/CloseIcon';
 import Heading from 'components/common/heading/Heading.styled';
+import MultiSelect from 'components/common/MultiSelect/MultiSelect.styled';
+import { Option } from 'react-multi-select-component';
 
 import * as S from './PreviewFields.styled';
 import { PreviewFilter } from './Message';
@@ -15,37 +16,55 @@ export interface InfoModalProps {
   values: PreviewFilter[];
   toggleIsOpen(): void;
   setFilters: (payload: PreviewFilter[]) => void;
+  messageFields: string[];
 }
 
 const PreviewFields: React.FC<InfoModalProps> = ({
   values,
   toggleIsOpen,
   setFilters,
+  messageFields,
 }) => {
-  const [field, setField] = React.useState('');
-  const [path, setPath] = React.useState('');
+  const [displayName, setDisplayName] = React.useState('');
+  const [path, setPath] = React.useState<Option>();
   const [errors, setErrors] = React.useState<string[]>([]);
   const [editIndex, setEditIndex] = React.useState<number | undefined>();
   const [showAddField, setShowAddField] = React.useState(false);
+
+  const messageFieldOptions = React.useMemo((): Option[] => {
+    return messageFields.map((p) => ({
+      label: p,
+      value: p,
+    }));
+  }, [messageFields]);
+
+  const filteredMessageFieldOptions = React.useMemo((): Option[] => {
+    return messageFieldOptions.filter(
+      (o) => !values.some((v) => v.path === o.value)
+    );
+  }, [messageFieldOptions, values]);
+
+  const handlePathSelect = (options: Option[]) => {
+    setPath(options.length < 1 ? undefined : options[options.length - 1]);
+  };
 
   const handleAccept = () => {
     toggleIsOpen();
   };
 
   const resetAddField = () => {
-    setField('');
-    setPath('');
+    setDisplayName('');
+    setPath(undefined);
     setShowAddField(false);
+    setEditIndex(undefined);
   };
 
   const handleOk = () => {
     const newErrors = [];
 
-    if (field === '') {
-      newErrors.push('field');
-    }
+    const selectedPath = path && path?.value;
 
-    if (path === '') {
+    if (!selectedPath) {
       newErrors.push('path');
     }
 
@@ -57,9 +76,12 @@ const PreviewFields: React.FC<InfoModalProps> = ({
     const newValues = [...values];
 
     if (typeof editIndex !== 'undefined') {
-      newValues.splice(editIndex, 1, { field, path });
+      newValues.splice(editIndex, 1, {
+        displayName,
+        path: selectedPath,
+      });
     } else {
-      newValues.push({ field, path });
+      newValues.push({ displayName, path: selectedPath });
     }
 
     resetAddField();
@@ -67,9 +89,7 @@ const PreviewFields: React.FC<InfoModalProps> = ({
   };
 
   const handleRemove = (filter: PreviewFilter) => {
-    const newValues = values.filter(
-      (item) => item.field !== filter.field && item.path !== filter.path
-    );
+    const newValues = values.filter((item) => item.path !== filter.path);
 
     setFilters(newValues);
   };
@@ -81,19 +101,21 @@ const PreviewFields: React.FC<InfoModalProps> = ({
 
   useEffect(() => {
     if (values?.length && typeof editIndex !== 'undefined') {
-      setField(values[editIndex].field);
-      setPath(values[editIndex].path);
+      setDisplayName(values[editIndex].displayName);
+      setPath(
+        messageFieldOptions.find((o) => o.value === values[editIndex].path)
+      );
     }
   }, [editIndex]);
 
   return (
     <S.PreviewFields>
-      <div>
+      <S.ContentWrapper>
         {values.map((item, index) => (
           <S.EditForm key="index">
             <S.Field>
               {' '}
-              {item.field} : {item.path}
+              {item.displayName} {item.displayName && ':'} {item.path}
             </S.Field>
             <S.EditFilterIcon
               role="button"
@@ -110,50 +132,53 @@ const PreviewFields: React.FC<InfoModalProps> = ({
             </S.DeleteFilterIcon>
           </S.EditForm>
         ))}
-        {!showAddField && values.length > 0 && (
-          <Button
-            buttonSize="M"
-            buttonType="primary"
-            isInverted
-            type="button"
-            onClick={() => setShowAddField(true)}
-          >
-            Add Field Preview
-          </Button>
-        )}
+        {!showAddField &&
+          values.length > 0 &&
+          filteredMessageFieldOptions.length > 0 && (
+            <Button
+              buttonSize="M"
+              buttonType="primary"
+              isInverted
+              type="button"
+              onClick={() => setShowAddField(true)}
+            >
+              Add Field Preview
+            </Button>
+          )}
         {(showAddField || values.length === 0) && (
           <div>
             <Heading level={4}>
               {typeof editIndex !== 'undefined' ? 'Edit' : 'Add'} Field
             </Heading>
-            <div>
-              <InputLabel htmlFor="previewFormField">Field</InputLabel>
-              <Input
-                type="text"
-                id="previewFormField"
-                min="1"
-                value={field}
-                placeholder="Field"
-                onChange={({ target }) => setField(target?.value)}
-              />
-              <FormError>
-                {errors.includes('field') && 'Field is required'}
-              </FormError>
-            </div>
-            <div>
+            <S.InputWrapper>
               <InputLabel htmlFor="previewFormJsonPath">Json path</InputLabel>
-              <Input
-                type="text"
-                id="previewFormJsonPath"
-                min="1"
-                value={path}
-                placeholder="Json Path"
-                onChange={({ target }) => setPath(target?.value)}
+              <MultiSelect
+                options={filteredMessageFieldOptions || []}
+                value={(path && [path]) || []}
+                onChange={handlePathSelect}
+                labelledBy="Json Path"
+                hasSelectAll={false}
+                isCreatable
+                closeOnChangedValue
+                valueRenderer={(selected) => selected[0] && selected[0].value}
               />
               <FormError>
                 {errors.includes('path') && 'Json path is required'}
               </FormError>
-            </div>
+            </S.InputWrapper>
+            <S.InputWrapper>
+              <InputLabel htmlFor="previewFormDisplayName">
+                Display Name
+              </InputLabel>
+              <Input
+                type="text"
+                id="previewFormDisplayName"
+                min="1"
+                value={displayName}
+                placeholder={(path && path.value) || 'Display Name'}
+                onChange={({ target }) => setDisplayName(target?.value)}
+              />
+            </S.InputWrapper>
             <S.ButtonWrapper>
               {values.length > 0 && (
                 <Button
@@ -177,7 +202,7 @@ const PreviewFields: React.FC<InfoModalProps> = ({
             </S.ButtonWrapper>
           </div>
         )}
-      </div>
+      </S.ContentWrapper>
       <S.ButtonWrapper>
         <Button
           buttonSize="M"

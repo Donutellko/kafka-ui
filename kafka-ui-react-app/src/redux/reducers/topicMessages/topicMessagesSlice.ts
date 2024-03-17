@@ -1,8 +1,43 @@
 import { createSlice } from '@reduxjs/toolkit';
-import { TopicMessagesState } from 'redux/interfaces';
+import { TopicMessagesState, TopicParsedMessage } from 'redux/interfaces';
 import { TopicMessage } from 'generated-sources';
 
 const PER_PAGE = 100;
+
+const parseToJson = (jsonString: string | undefined) => {
+  if (!jsonString) return {};
+  try {
+    return JSON.parse(jsonString);
+  } catch (error) {
+    return {};
+  }
+};
+
+const parseMessageToJson = (message: TopicMessage) => {
+  return {
+    ...message,
+    keyJson: parseToJson(message.key),
+    contentJson: parseToJson(message.content),
+  };
+};
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const getFieldsOfJsonObject = (obj: any): string[] => {
+  if (!obj) return [];
+  const keys: string[] = [];
+
+  Object.keys(obj).forEach((key) => {
+    if (typeof obj[key] === 'object' && obj[key] !== null) {
+      const nestedKeys = getFieldsOfJsonObject(obj[key]);
+      keys.push(key);
+      keys.push(...nestedKeys.map((nestedKey) => `${key}.${nestedKey}`));
+    } else {
+      keys.push(key);
+    }
+  });
+
+  return keys;
+};
 
 export const initialState: TopicMessagesState = {
   allMessages: [],
@@ -17,6 +52,8 @@ export const initialState: TopicMessagesState = {
   isFetching: false,
   currentPage: 0,
   lastLoadedPage: 0,
+  messageKeyFields: [],
+  messageContentFields: [],
 };
 
 const topicMessagesSlice = createSlice({
@@ -24,18 +61,35 @@ const topicMessagesSlice = createSlice({
   initialState,
   reducers: {
     addTopicMessage: (state, action) => {
-      const allmessages: TopicMessage[] = action.payload.prepend
-        ? [action.payload.message, ...state.allMessages]
-        : [...state.allMessages, action.payload.message];
+      const parsedMessage = parseMessageToJson(action.payload.message);
+      const allmessages: TopicParsedMessage[] = action.payload.prepend
+        ? [parsedMessage, ...state.allMessages]
+        : [...state.allMessages, parsedMessage];
 
-      const messages: TopicMessage[] = action.payload.prepend
+      const messages: TopicParsedMessage[] = action.payload.prepend
         ? [action.payload.message, ...state.messages]
         : [...state.messages, action.payload.message];
+
+      const messageKeyFields = [
+        ...new Set([
+          ...state.messageKeyFields,
+          ...getFieldsOfJsonObject(parsedMessage.keyJson),
+        ]),
+      ] as string[];
+
+      const messageContentFields = [
+        ...new Set([
+          ...state.messageContentFields,
+          ...getFieldsOfJsonObject(parsedMessage.contentJson),
+        ]),
+      ] as string[];
 
       return {
         ...state,
         allMessages: allmessages,
         messages,
+        messageKeyFields,
+        messageContentFields,
       };
     },
     resetTopicMessages: (state) => {

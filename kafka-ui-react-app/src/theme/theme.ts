@@ -771,6 +771,9 @@ export const theme = {
       color: Colors.brand[50],
     },
   },
+  messagePreviewFilter: {
+    seperatorColor: Colors.neutral[10],
+  },
 };
 
 export type ThemeType = typeof theme;
@@ -1303,5 +1306,8 @@ export const darkTheme: ThemeType = {
     navigationIcon: {
       color: Colors.brand[50],
     },
+  },
+  messagePreviewFilter: {
+    seperatorColor: Colors.neutral[70],
   },
 };
