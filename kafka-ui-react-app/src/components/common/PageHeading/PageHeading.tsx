@@ -1,4 +1,4 @@
-import React, { PropsWithChildren } from 'react';
+import React, { PropsWithChildren, useEffect } from 'react';
 import Heading from 'components/common/heading/Heading.styled';
 
 import * as S from './PageHeading.styled';
@@ -16,6 +16,10 @@ const PageHeading: React.FC<PropsWithChildren<PageHeadingProps>> = ({
   children,
 }) => {
   const isBackButtonVisible = backTo && backText;
+  
+  useEffect(() => {
+    document.title = text + " | UI for Apache Kafka";
+  }, []);
 
   return (
     <S.Wrapper>
