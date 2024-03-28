@@ -2903,7 +2903,7 @@ components:
         - FORWARD
         - BACKWARD
         - TAILING
-      default: FORWARD
+      default: BACKWARD
 
     Partition:
       type: object
