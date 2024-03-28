@@ -190,7 +190,7 @@ const Filters: React.FC<FiltersProps> = ({
     setOffset('');
     setTimestamp(null);
     setQuery('');
-    changeSeekDirection(SeekDirection.FORWARD);
+    changeSeekDirection(SeekDirection.BACKWARD);
     getSelectedPartitionsFromSeekToParam(searchParams, partitions);
     setSelectedPartitions(
       partitions.map((partition: Partition) => {

@@ -106,7 +106,7 @@ public class MessagesController extends AbstractController implements MessagesAp
     }
 
     seekType = seekType != null ? seekType : SeekTypeDTO.BEGINNING;
-    seekDirection = seekDirection != null ? seekDirection : SeekDirectionDTO.FORWARD;
+    seekDirection = seekDirection != null ? seekDirection : SeekDirectionDTO.BACKWARD;
     filterQueryType = filterQueryType != null ? filterQueryType : MessageFilterTypeDTO.STRING_CONTAINS;
 
     var positions = new ConsumerPosition(

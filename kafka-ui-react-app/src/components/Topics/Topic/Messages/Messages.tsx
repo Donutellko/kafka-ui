@@ -1,6 +1,6 @@
 import React, { useCallback, useMemo, useState } from 'react';
 import TopicMessagesContext from 'components/contexts/TopicMessagesContext';
-import { SeekDirection, SerdeUsage } from 'generated-sources';
+import { SeekDirection, SerdeUsage, SeekType, } from 'generated-sources';
 import { useSearchParams } from 'react-router-dom';
 import { useSerdes } from 'lib/hooks/api/topicMessages';
 import useAppParams from 'lib/hooks/useAppParams';
@@ -51,10 +51,16 @@ const Messages: React.FC = () => {
     if (!searchParams.get('limit')) {
       searchParams.set('limit', MESSAGES_PER_PAGE);
     }
+    if (!searchParams.get('seekDirection')) {
+      searchParams.set('seekDirection', SeekDirection.BACKWARD);
+    }
+    if (!searchParams.get('seekType')) {
+      searchParams.set('seekType', SeekType.LATEST);
+    }
     setSearchParams(searchParams);
   }, [serdes]);
 
-  const defaultSeekValue = SeekDirectionOptions[0];
+  const defaultSeekValue = SeekDirectionOptions[1];
 
   const [seekDirection, setSeekDirection] = React.useState<SeekDirection>(
     (searchParams.get('seekDirection') as SeekDirection) ||
