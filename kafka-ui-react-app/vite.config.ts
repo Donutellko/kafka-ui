@@ -9,7 +9,7 @@ import tsconfigPaths from 'vite-tsconfig-paths';
 import { ViteEjsPlugin } from 'vite-plugin-ejs';
 
 export default defineConfig(({ mode }) => {
-  process.env = { ...process.env, ...loadEnv(mode, process.cwd()) };
+    process.env = { ...process.env, ...loadEnv(mode, process.cwd()) };
 
   const defaultConfig: UserConfigExport = {
     plugins: [
@@ -57,6 +57,7 @@ export default defineConfig(({ mode }) => {
       'process.env.NODE_ENV': `"${mode}"`,
       'process.env.VITE_TAG': `"${process.env.VITE_TAG}"`,
       'process.env.VITE_COMMIT': `"${process.env.VITE_COMMIT}"`,
+      process: undefined // for me doesn't work otherwise when run through Vite
     },
   };
   const proxy = process.env.VITE_DEV_PROXY;
