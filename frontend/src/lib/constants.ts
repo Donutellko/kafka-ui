@@ -51,7 +51,7 @@ export const NOT_SET = -1;
 export const BYTES_IN_GB = 1_073_741_824;
 export const BUILD_VERSION_PATTERN = /v\d.\d.\d/;
 
-export const PER_PAGE = 25;
+export const PER_PAGE = 50;
 export const MESSAGES_PER_PAGE = '100';
 
 export const GIT_REPO_LINK = 'https://github.com/donutellko/kafka-ui';
