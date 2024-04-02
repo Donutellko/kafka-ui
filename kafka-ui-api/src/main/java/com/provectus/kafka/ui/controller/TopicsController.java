@@ -47,7 +47,7 @@ import reactor.core.publisher.Mono;
 @Slf4j
 public class TopicsController extends AbstractController implements TopicsApi {
 
-  private static final Integer DEFAULT_PAGE_SIZE = 25;
+  private static final Integer DEFAULT_PAGE_SIZE = 50;
 
   private final TopicsService topicsService;
   private final TopicAnalysisService topicAnalysisService;
