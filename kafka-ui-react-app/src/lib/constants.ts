@@ -55,7 +55,7 @@ export const BUILD_VERSION_PATTERN = /v\d.\d.\d/;
 export const PER_PAGE = 25;
 export const MESSAGES_PER_PAGE = '100';
 
-export const GIT_REPO_LINK = 'https://github.com/provectus/kafka-ui';
+export const GIT_REPO_LINK = 'https://github.com/donutellko/kafka-ui';
 export const GIT_REPO_LATEST_RELEASE_LINK =
   'https://api.github.com/repos/provectus/kafka-ui/releases/latest';
 
