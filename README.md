@@ -1,3 +1,23 @@
+# Kafka-UI fork
+
+This fork has the following changes:
+* Messages load with *Latest first* by default;
+* When clicking on the topic name in the topic list, Messages tab opens by instead of Overview;
+* Page or topic name is displayed in the browser tab title.
+* Topics list has perPage=50 by default.
+
+# To build the docker image
+
+```shell
+java --version # should be 17
+
+./mvnw -B -ntp versions:set -DnewVersion= # 8 symbols from the commit hash
+
+./mvnw clean install -DskipTests -Pprod
+```
+
+# Following original README:
+
 ![UI for Apache Kafka logo](documentation/images/kafka-ui-logo.png) UI for Apache Kafka&nbsp;
 ------------------
 #### Versatile, fast and lightweight web UI for managing Apache Kafka® clusters. Built by developers, for developers.
