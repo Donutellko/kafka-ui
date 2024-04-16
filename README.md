@@ -1,3 +1,32 @@
+# Donutellko's Kafbat fork 
+Kafka-UI development is currently paused by Provectus: [[announcement]](https://github.com/provectus/kafka-ui/discussions/4255).   
+[[Kafbat]](https://github.com/kafbat/kafka-ui) team is working on enhancing it.
+And I decided to customize it: [[my repo]](https://github.com/Donutellko/kafka-ui).
+
+This fork has the following changes relative to Kafka-UI and Kafbat:
+* Messages load with *Latest first* by default;
+* When clicking on the topic name in the topic list, Messages tab opens by instead of Overview;
+* Page or topic name is displayed in the browser tab title.
+* Topics list has perPage=50 by default.
+* [relative to Kafbat]: theme is reverted to blue.
+
+Meanwhile Kafbat brings the following features to the Provectus' product:
+* Fixed pagination and other issues. 
+* ???
+* See their [Release](https://github.com/kafbat/kafka-ui/releases/tag/v1.0.0)
+
+# To build the docker image
+
+```shell
+java --version # should be 17
+
+./mvnw -B -ntp versions:set -DnewVersion= # 8 symbols from the commit hash
+
+./mvnw clean install -DskipTests -Pprod
+```
+
+# Following original README:
+
 <div align="center">
 <img src="documentation/images/logo_new.png" alt="logo"/>
 <h3>Kafbat UI</h3>
