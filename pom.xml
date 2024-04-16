@@ -175,7 +175,7 @@
 
     <groupId>com.provectus</groupId>
     <artifactId>kafka-ui</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>local_test</version>
     <name>kafka-ui</name>
     <description>Web UI for Apache Kafka</description>
 </project>
