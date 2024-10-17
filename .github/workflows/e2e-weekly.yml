@@ -1,7 +1,7 @@
 name: "E2E: Weekly suite"
 on:
   schedule:
-    - cron: '0 1 * * 1'
+#    - cron: '0 1 * * 1'
 
 permissions:
   contents: read
